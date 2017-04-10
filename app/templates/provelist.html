@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}S知乎 - 回答{% endblock %}
+
+{% block page_content%}
+{% for answer in answers %}
+<div class="question-title">
+    <a href="{{ url_for('.question', id=answer.question_id) }}">
+        {{ answer.question_title}}
+    </a>
+ </div>
+{% endfor %}
+{% include '_answers.html' %}
+<h4 id="comments">评论</h4>
+{% if current_user.can(Permission.COMMENT) %}
+<div class="comment-form"> 
+	{{ wtf.quick_form(form) }}	
+</div>
+{% endif %}
+{% include '_comments.html' %}
+{% if pagination %}
+<div class="pagination">
+	{{ macros.pagination_widget(pagination, '.answer', fragment='#comments', id=answers[0].id) }}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}知乎{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+.my-button {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #ee2121, #CD0000) repeat scroll 0 0;
+    border: 1px solid #CD0000;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(255, 255, 255, 0.15) inset;
+    color: #fff;
+    cursor: pointer;
+    float: right;
+    font-size: 14px;
+    height: 32px;
+    line-height: 30px;
+	margin-top: -5px;
+    outline: 0 none;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+    transition: all 0.2s ease-in-out 0s;
+    width: 66px;}
+	
+.navbar-inverse .navbar-nav > li > a {
+    color: #efeff3;
+}
+
+.zu-top-search {
+    float: left;
+    margin: 7px 0 0 12px;
+    position: relative;
+}
+input[type="text"], input[type="password"]:focus {
+}
+.zu-top-search-input {
+    background-color: #CD0000;
+    border: 0px solid #045bb2;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: #49525c;
+    font-size: 14px;
+    line-height: 17px;
+    outline: 0 none;
+    padding: 3px 50px 7px 10px;
+    transition: all 0.2s ease-in-out 0s;
+    width: 100%;
+}
+
+.zu-top-search-form .zu-top-search-button::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+.zu-top-search-form .zu-top-search-button {
+    background: rgba(0, 0, 0, 0) linear-gradient(to bottom, #0e7bef, #0d73da) repeat scroll 0 0;
+    border: 1px solid #045bb2;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 1px rgba(255, 255, 255, 0.15) inset;
+    box-sizing: border-box;
+    cursor: pointer;
+    height: 100%;
+    outline: 0 none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 40px;
+}
+button {
+    line-height: 1.7;
+    padding: 0;
+}
+div[contentEditable], input, textarea, button, a:link {
+}
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    margin: 0;
+}
+</style>
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" style="background-color: #CD0000; color: #ffffff;" role="navigation">
+    <div class="container">
+        <div class="navbar-header" >
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style= "color: #ffffff;" href="{{ url_for('main.index') }}">知乎</a>
+        </div>
+        <div class="navbar-collapse collapse">
+
+			<form class="zu-top-search" action="{{url_for('main.search')}}" method="post" name="search">	{{g.search_form.hidden_tag()}}
+				<div class="zu-top-search-input">
+				{{g.search_form.search(size=80)}}
+				<button type="submit" class="zu-top-search-button"><span class="hide-text" >搜索</span><span class="sprite-global-icon-magnifier-dark"></span>
+				</button>
+				</div>
+			</form>
+
+			<ul class="nav navbar-nav">
+                <li><a href="{{ url_for('main.index') }}">首页</a></li>
+                {% if current_user.is_authenticated %}
+                <li><a href="#">话题</a></li>
+				<li><a href="#">发现</a></li>
+				<li><a href="#">消息</a></li>
+                {% endif %}
+            </ul>
+			<ul class="nav navbar-nav">
+                {% if current_user.can(Permission.QUESTION) %}
+                <li><a href="{{ url_for('main.make_question')}}"><button class="my-button">提问</button></a></li>
+                {% endif %}
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.can(Permission.MODERATE_COMMENTS) %}
+                <li><a href="{{ url_for('main.moderate') }}">管理评论</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="{{ current_user.gravatar(size=18) }}">
+                            {{ current_user.username }} <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{{ url_for('main.user', username=current_user.username) }}"></a></li>
+                        <li><a href="{{ url_for('main.user', username=current_user.username) }}">我的主页</a></li>
+                        <li><a href="{{ url_for('auth.change_password') }}">改变密码</a></li>
+                        <li><a href="{{ url_for('auth.change_email_request') }}">改变邮箱</a></li>
+                        <li><a href="{{ url_for('auth.logout') }}">登出</a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{ url_for('auth.login') }}"> 登陆 </a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ moment.include_moment() }}
+{{ moment.lang('zh-CN') }}
+{% endblock %}

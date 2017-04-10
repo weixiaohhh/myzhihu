@@ -1,0 +1,9 @@
+-r requirements/prod.txt
+
+Flask-SSLify==0.1.4
+
+gunicorn==19.6.0
+
+psycopg2
+
+

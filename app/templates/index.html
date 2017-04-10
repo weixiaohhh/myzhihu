@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}知乎{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+
+    <h3>
+	欢迎你，
+	{% if current_user.is_authenticated %}
+	{{ current_user.username }}
+	{% else %} 
+	新用户请先注册
+	{% endif %}</h3>
+</div>
+<div class="answer-tabs">
+    <ul class="nav nav-tabs">
+        <li {% if not show_followed and not show_self %} class="active" {% endif %} >
+        <a href="{{ url_for('.show_all') }}">所有提问</a>
+        </li>
+        {% if current_user.is_authenticated %}
+        <li {% if show_followed %} class="active" {% endif %} >
+        <a href="{{ url_for('.show_followed') }}">关注用户的问题</a>
+        </li>
+        <li {% if show_self %} class="active" {% endif %} >
+        <a href="{{ url_for('.show_self') }}">自己的问题</a>
+        </li>
+        {% endif %}
+    </ul>
+    {% include '_questions.html' %}
+</div>
+{% if pagination %}
+<div class="pagination">
+    {{ macros.pagination_widget(pagination, '.index') }}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}

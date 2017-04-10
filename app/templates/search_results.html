@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="page">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-12 column">
+
+                            <h5>你搜索 "{{info}}"的结果:</h5>
+                            {% if results %}
+                            {% for question in results %}
+							<article id="page-content" class="clearfix editor-styles">
+
+
+
+                            <h3><a href="{{url_for('.question',id=question.id)}}">{{question.title}}</a></h3>
+                                <div class="editor-styles">
+
+
+                                        {{question.body_html|safe}}
+
+
+                                </div>
+                                <footer>
+                                    <hr>
+                                </footer>
+                                </article>
+
+                            {% endfor %}
+                            {% else %}
+                            <p>迷失在未知的二次元世界....</p>
+                            {% endif %}
+						</div>
+					</div>
+				</div>
+			</section>
+
+
+{% endblock %}

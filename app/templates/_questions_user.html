@@ -1,0 +1,21 @@
+<ul class="questions">
+    {% for question in questions %}
+    <li class="question">
+        <div class="question-content">
+            <div class="question-title">
+                <a href="{{ url_for('.question', id=question.id) }}">
+                {{question.title}}
+                </a>
+            </div>
+            <div class="question-body">
+                {% if question.body_html %}
+                    {{ question.body_html | safe }}
+                {% else %}
+                    {{ question.body }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="question-footer"></div>
+    </li>
+    {% endfor %}
+</ul>

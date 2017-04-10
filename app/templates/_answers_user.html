@@ -1,0 +1,48 @@
+<ul class="answers">
+    {% for answer in answers %}
+    <li class="answer">
+        <div class="answer-content">
+            <div class="question-title">
+                <a href="{{ url_for('.question', id=answer.question_id) }}">
+                {{ answer.question_title}}
+                </a>
+            </div>
+            <div class="answer-date">{{ moment(answer.timestamp).fromNow() }}</div>
+            <div class="answer-body">
+                {% if answer.body_html %}
+                    {{ answer.body_html | safe }}
+                {% else %}
+                    {{ answer.body }}
+                {% endif %}
+            </div>
+            <div class="answer-footer">
+                {% if current_user != answer.author %}
+                <a href="{{ url_for('.prove', id=answer.id) }}">
+                    <span class="label label-info">点赞</span>
+                </a>
+                {% elif current_user != answer.author and current_user.is_proving(answer.id) %}
+                <a href="{{ url_for('.unprove', id=answer.id) }}">
+                    <span class="label label-danger">取消赞</span>
+                </a>
+                {% endif %}  
+                {% if current_user == answer.author %}
+                <a href="{{ url_for('.edit', id=answer.id) }}">
+                    <span class="label label-primary">修改</span>
+                </a>
+                {% elif current_user.is_administrator() %}
+                <a href="{{ url_for('.edit', id=answer.id) }}">
+                    <span class="label label-danger">修改[管理]</span>
+                </a>
+                {% endif%}
+                <a href="{{ url_for('.answer', id=answer.id) }}">
+                    <span class="label label-default">链接</span>
+                </a>
+                <a href="{{ url_for('.answer', id=answer.id) }}#comments">
+                    <span class="label label-primary">{{ answer.comments.count() }} 评论</span>
+                </a>
+
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
