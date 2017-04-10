@@ -1,5 +1,5 @@
 # coding:utf-8
-from flask import render_template, redirect, request, url_for, flash
+from flask import render_template, redirect, request, url_for, flash,g
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from app.auth import auth
 from app.__init__ import db
@@ -7,7 +7,17 @@ from app.models import User
 from app.mails import send_email
 from app.auth.forms import LoginForm, RegistrationForm, ChangePasswordForm, \
             PasswordResetRequestForm, PasswordResetForm, ChangeEmailForm
+from app.main.forms import SearchForm
 
+			
+@auth.before_request
+def before_request():
+    g.user = current_user
+    if g.user.is_authenticated:
+        db.session.add(g.user)
+        db.session.commit()
+        g.search_form = SearchForm()
+		
 @auth.route('/login',methods=['GET','POST'])
 def login():
     form = LoginForm()

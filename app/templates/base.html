@@ -99,15 +99,16 @@ button, input, select, textarea {
             <a class="navbar-brand" style= "color: #ffffff;" href="{{ url_for('main.index') }}">知乎</a>
         </div>
         <div class="navbar-collapse collapse">
-
+			{% if g.user.is_authenticated %}
 			<form class="zu-top-search" action="{{url_for('main.search')}}" method="post" name="search">	{{g.search_form.hidden_tag()}}
+
 				<div class="zu-top-search-input">
 				{{g.search_form.search(size=80)}}
-				<button type="submit" class="zu-top-search-button"><span class="hide-text" >搜索</span><span class="sprite-global-icon-magnifier-dark"></span>
+				<button type="submit" class="zu-top-search-button" value="Search"><span class="hide-text" >搜索</span><span class="sprite-global-icon-magnifier-dark"></span>
 				</button>
 				</div>
 			</form>
-
+			{% endif %}
 			<ul class="nav navbar-nav">
                 <li><a href="{{ url_for('main.index') }}">首页</a></li>
                 {% if current_user.is_authenticated %}

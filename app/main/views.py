@@ -11,11 +11,13 @@ from .forms import EditProfileForm, EditProfileAdminForm, CommentForm, QuestionF
 from .. import db
 from ..decorators import admin_required, permission_required
 
-
 @main.before_request
 def before_request():
-
-     g.search_form = SearchForm()
+    g.user = current_user
+    if g.user.is_authenticated:
+        db.session.add(g.user)
+        db.session.commit()
+        g.search_form = SearchForm()
 		
 		
 @main.route('/', methods=['GET','POST'])
