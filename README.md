@@ -3,7 +3,6 @@
 ** 支持基本功能-注册验证用户
 ** 提问，回答，评论，点赞，用户互相关注
 ** 支持中文检索
-
 * 2.安装步骤
 ** virtutal env
 ** pip install -r requirements.txt
