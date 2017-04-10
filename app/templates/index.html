@@ -7,13 +7,7 @@
 {% block page_content %}
 <div class="page-header">
 
-    <h3>
-	欢迎你，
-	{% if current_user.is_authenticated %}
-	{{ current_user.username }}
-	{% else %} 
-	新用户请先注册
-	{% endif %}</h3>
+    <h1>知乎欢迎你，{% if current_user.is_authenticated %}{{ current_user.username }}{% else %} 新用户<p>请先注册</p> {% endif %}</h1>
 </div>
 <div class="answer-tabs">
     <ul class="nav nav-tabs">

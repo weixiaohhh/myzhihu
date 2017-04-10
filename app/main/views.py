@@ -166,8 +166,11 @@ def unprove(id):
 
 @main.route('/provelist/<int:id>', methods=['GET', 'POST'])
 def provelist(id):
-
-    return
+	all_prover = Prove.query.filter_by(answer_id=id).all()
+	all_prover_user = []
+	for prover in all_prover:
+	    all_prover_user.append(User.query.get_or_404(prover.prover_id))
+	return render_template('prove_user.html', all_prover_user=all_prover_user)
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])

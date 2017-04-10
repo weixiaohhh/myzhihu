@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+
+{% block title %}知乎 - 回答{% endblock %}
+
+{% block page_content%}
+{% for user in all_prover_user %}
+<div class="question-title">
+    <h5></h1><a href="{{ url_for('main.user', username=user.username) }}">
+        {{ user.username}}
+    </a></h5>
+	<h4>赞了你</h4>
+ </div>
+ ---------------------------------------------------------------------------
+{% endfor %}
+{% endblock %}
