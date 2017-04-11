@@ -38,7 +38,7 @@ def index():
     else:
         query = Question.query                    #show_followed=0 and show_self=0 显示所有问题
     pagination = query.order_by(Question.timestamp.desc()).paginate(
-        page, per_page=current_app.config['FLASK_QUESTIONS_PER_PAGE'],error_out=False
+        page, per_page=3,error_out=False
     )
     #Question.query.order_by(Question.timestamp.desc()).all()  #desc（）降序，离现在最近的排在最上面
     #page页数，必须的参数；per_page每页数量，默认20；error_out设为True则页数超过范围返回空
@@ -67,6 +67,7 @@ def edit_profile():
         current_user.location = form.location.data
         current_user.about_me = form.about_me.data
         db.session.add(current_user)
+        db.session.commit()
         flash('Your profile has been updated.')
         return redirect(url_for('.user',username=current_user.username))
     form.name.data = current_user.name
@@ -90,6 +91,7 @@ def edit_profile_admin(id):
         user.location = form.location.data
         user.about_me = form.about_me.data
         db.session.add(user)
+        db.session.commit()
         flash('The profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
     form.email.data = user.email
@@ -109,6 +111,7 @@ def make_question():
 						author=current_user._get_current_object())
         #数据库需要真正对象，而current_user是通过线程内的代理对象实现的，需要使用_get_current_object()
         db.session.add(question)
+        db.session.commit()
         flash('你已经成功提问')
         return redirect(url_for('.user', username=current_user.username))
     return render_template('make-question.html', form=form)
@@ -120,6 +123,7 @@ def question(id):
     if form.validate_on_submit():
         answer = Answer(body=form.body.data, question=question, author=current_user._get_current_object(), question_title = question.title)
         db.session.add(answer)
+        db.session.commit()
         flash('回答成功!')
         return redirect(url_for('.question',id=question.id, page=-1)) #page=-1用来请求最后一页
     page = request.args.get('page', 1, type=int)
@@ -138,6 +142,7 @@ def answer(id):
     if form.validate_on_submit():
         comment = Comment(body=form.body.data, answer=answer, author=current_user._get_current_object())
         db.session.add(comment)
+        db.session.commit()
         flash('Your comment has been published.')
         return redirect(url_for('.answer', id=answer.id, page=-1)) #page=-1用来请求最后一页
     page = request.args.get('page', 1, type=int)
@@ -154,6 +159,7 @@ def prove(id):
     answer = Answer.query.get_or_404(id)
     prove = Prove(prover=current_user._get_current_object() , answer=answer)
     db.session.add(prove)
+    db.session.commit()
     flash('你已经赞了该答案.')
     return redirect(url_for('.answer', id=id))
 
@@ -161,6 +167,7 @@ def prove(id):
 def unprove(id):
     p = db.session.query(Prove).join(User, Prove.prover_id == User.id).filter(Prove.answer_id == id).first()
     db.session.delete(p)
+    db.session.commit()
     flash('你已经取消了赞.')
     return redirect(url_for('.answer', id=id))
 
@@ -183,6 +190,7 @@ def edit(id):
     if form.validate_on_submit():
         answer.body = form.body.data
         db.session.add(answer)
+        db.session.commit()
         flash('The answer has been updated.')
         return redirect(url_for('.answer', id=answer.id))
     form.body.data = answer.body
@@ -294,6 +302,7 @@ def moderate_enable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = False
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
 
@@ -304,6 +313,7 @@ def moderate_disable(id):
     comment = Comment.query.get_or_404(id)
     comment.disabled = True
     db.session.add(comment)
+    db.session.commit()
     return redirect(url_for('.moderate',
                             page=request.args.get('page', 1, type=int)))
 

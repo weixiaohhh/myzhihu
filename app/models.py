@@ -172,6 +172,7 @@ class User(db.Model, UserMixin):
             return False
         self.confirmed = True  #confirmed属性设置为True
         db.session.add(self)
+        db.session.commit()
         return True
 
     def generate_reset_token(self, expiration=3600):
@@ -188,6 +189,7 @@ class User(db.Model, UserMixin):
             return False
         self.password = new_password
         db.session.add(self)
+        db.session.commit()
         return True
 
     def generate_email_change_token(self, new_email, expiration=3600):
@@ -210,6 +212,7 @@ class User(db.Model, UserMixin):
         self.email = new_email
         self.avatar_hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
         db.session.add(self)
+        db.session.commit()
         return True
 
     def can(self, permissions):
@@ -224,6 +227,7 @@ class User(db.Model, UserMixin):
     def ping(self):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
+        db.session.commit()
 
     def gravatar(self, size=128, default='identicon', rating='9'):
         # if request.is_secure:
@@ -245,11 +249,13 @@ class User(db.Model, UserMixin):
         if not self.is_following(user): #是否关注了这个user，如果没有，可以关注
             f = Follow(follower=self, followed=user) #添加一个Follow模型对象，follwer和followed属性设立
             db.session.add(f)
+            db.session.commit()
 
     def unfollow(self, user):
         f = self.followed.filter_by(followed_id=user.id).first() #已经关注了该用户
         if f:
             db.session.delete(f)
+            db.session.commit()
 
     def is_following(self, user): #是否正在关注
         return self.followed.filter_by(followed_id=user.id).first() is not None
@@ -407,9 +413,9 @@ class Question(db.Model):
 db.event.listen(Question.body, 'set', Question.on_changed_body)
 
 
-from manage import app
+myapp = create_app( 'default' or os.getenv('FLASK_CONFIG'))
 if enable_search:
-    whooshalchemyplus.whoosh_index(app, Question)
+    whooshalchemyplus.whoosh_index(myapp, Question)
 	
 
 
