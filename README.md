@@ -1,3 +1,6 @@
+[项目地址](https://fzhihu.herokuapp.com/)
+___
+
 # zhihu(python 2.7)
 * 1.flask仿知乎做的web
  * 支持基本功能-注册验证用户
