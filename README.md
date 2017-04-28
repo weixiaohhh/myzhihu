@@ -1,4 +1,4 @@
-[预览地址]（https://fzhihu.herokuapp.com/）
+[预览地址](https://fzhihu.herokuapp.com/)
 ___
 
 # zhihu(python 2.7)
